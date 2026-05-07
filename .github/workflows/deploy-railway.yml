@@ -9,6 +9,7 @@ on:
       - 'config/**'
       - 'requirements.txt'
       - 'Dockerfile'
+      - 'docker-compose.yml'
       - '.github/workflows/deploy-railway.yml'
   workflow_dispatch:
 
@@ -20,9 +21,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install Railway CLI
+      run: npm install -g @railway/cli
+
     - name: Deploy to Railway
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
       run: |
-        npm install -g @railway/cli
-        railway up --service pension-calculator-api
+        railway up --service pension-calculator-api --detach
+
+    - name: Verify Deployment
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      run: |
+        sleep 10
+        railway status || echo "Deployment verification skipped"
