@@ -47,22 +47,22 @@
         {{ store.error }}
       </div>
 
-      <div v-if="result" class="mt-6 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded transition-colors duration-300">
-        <h3 class="text-lg font-semibold text-green-700 mb-4">Výsledek předčasného důchodu</h3>
+      <div v-if="result" class="mt-6 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded transition-colors duration-300 fade-in">
+        <h3 class="text-lg font-semibold text-green-700 dark:text-green-400 mb-4">Výsledek předčasného důchodu</h3>
         <div class="space-y-2">
-          <div class="flex justify-between py-2 border-b border-green-200">
-            <span>Původní důchod:</span>
-            <span class="font-medium">{{ Number(result.original_pension).toFixed(2) }} Kč</span>
+          <div class="flex justify-between py-2 border-b border-green-200 dark:border-green-800">
+            <span class="text-gray-700 dark:text-gray-300">Původní důchod:</span>
+            <span class="font-medium text-gray-900 dark:text-gray-100">{{ Number(result.original_pension).toFixed(2) }} Kč</span>
           </div>
-          <div class="flex justify-between py-2 border-b border-green-200">
-            <span>Měsíce předčasnosti:</span>
-            <span class="font-medium">{{ result.months_early }}</span>
+          <div class="flex justify-between py-2 border-b border-green-200 dark:border-green-800">
+            <span class="text-gray-700 dark:text-gray-300">Měsíce předčasnosti:</span>
+            <span class="font-medium text-gray-900 dark:text-gray-100">{{ result.months_early }}</span>
           </div>
-          <div class="flex justify-between py-2 border-b border-green-200">
-            <span>Krácení celkem:</span>
-            <span class="font-medium text-red-600">{{ Number(result.reduction_percent).toFixed(2) }}%</span>
+          <div class="flex justify-between py-2 border-b border-green-200 dark:border-green-800">
+            <span class="text-gray-700 dark:text-gray-300">Krácení celkem:</span>
+            <span class="font-medium text-red-600 dark:text-red-400">{{ Number(result.reduction_percent).toFixed(2) }}%</span>
           </div>
-          <div class="flex justify-between py-2 font-bold text-green-700 text-lg">
+          <div class="flex justify-between py-2 font-bold text-green-700 dark:text-green-400 text-lg">
             <span><strong>Předčasný důchod:</strong></span>
             <span><strong>{{ Number(result.reduced_pension).toFixed(2) }} Kč</strong></span>
           </div>

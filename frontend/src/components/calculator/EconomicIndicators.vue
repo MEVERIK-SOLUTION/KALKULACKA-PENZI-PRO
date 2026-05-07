@@ -49,29 +49,31 @@
         {{ loading ? 'Aktualizuji...' : 'Aktualizovat data' }}
       </Button>
 
-      <div v-if="store.error" class="p-4 bg-red-50 text-red-600 rounded">
+      <div v-if="store.error" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded transition-colors duration-300">
         {{ store.error }}
       </div>
 
       <!-- Tabulka s historickými daty -->
-      <div v-if="historicalData.length > 0" class="mt-4">
-        <h4 class="font-medium mb-3">Historická data (posledních 12 měsíců)</h4>
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="bg-gray-100">
-              <th class="text-left p-2">Měsíc</th>
-              <th class="text-right p-2">Inflace (%)</th>
-              <th class="text-right p-2">Kurz EUR</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, idx) in historicalData" :key="idx" class="border-t">
-              <td class="p-2">{{ item.month }}</td>
-              <td class="text-right p-2">{{ item.inflation }}%</td>
-              <td class="text-right p-2">{{ item.eurRate }} Kč</td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-if="historicalData.length > 0" class="mt-4 fade-in">
+        <h4 class="font-medium mb-3 text-gray-800 dark:text-gray-200">Historická data (posledních 12 měsíců)</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-100 dark:bg-[#1a1a2e]">
+                <th class="text-left p-2 text-gray-700 dark:text-gray-300">Měsíc</th>
+                <th class="text-right p-2 text-gray-700 dark:text-gray-300">Inflace (%)</th>
+                <th class="text-right p-2 text-gray-700 dark:text-gray-300">Kurz EUR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, idx) in historicalData" :key="idx" class="border-t border-gray-200 dark:border-[#2d3748]">
+                <td class="p-2 text-gray-800 dark:text-gray-200">{{ item.month }}</td>
+                <td class="text-right p-2 text-gray-800 dark:text-gray-200">{{ item.inflation }}%</td>
+                <td class="text-right p-2 text-gray-800 dark:text-gray-200">{{ item.eurRate }} Kč</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </Card>

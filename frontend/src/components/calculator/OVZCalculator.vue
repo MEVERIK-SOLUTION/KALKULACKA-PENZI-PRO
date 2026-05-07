@@ -70,26 +70,26 @@
         {{ loading ? 'Počítám...' : 'Vypočítat OVZ' }}
       </Button>
 
-      <div v-if="store.error" class="p-4 bg-red-50 text-red-600 rounded">
+      <div v-if="store.error" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded transition-colors duration-300">
         {{ store.error }}
       </div>
 
       <!-- Výsledek s vizualizací -->
-      <div v-if="result" class="mt-6 space-y-6">
-        <div class="p-6 bg-green-50 rounded-lg">
-          <h3 class="text-lg font-semibold text-green-700 mb-4">Výsledek OVZ</h3>
+      <div v-if="result" class="mt-6 space-y-6 fade-in">
+        <div class="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg transition-colors duration-300">
+          <h3 class="text-lg font-semibold text-green-700 dark:text-green-400 mb-4">Výsledek OVZ</h3>
           <div class="space-y-2">
-            <div class="flex justify-between py-2 border-b border-green-200">
-              <span>OVZ:</span>
-              <span class="font-medium">{{ Number(result.ovz).toFixed(2) }} Kč</span>
+            <div class="flex justify-between py-2 border-b border-green-200 dark:border-green-800">
+              <span class="text-gray-700 dark:text-gray-300">OVZ:</span>
+              <span class="font-medium text-gray-900 dark:text-gray-100">{{ Number(result.ovz).toFixed(2) }} Kč</span>
             </div>
           </div>
         </div>
 
         <!-- Jednoduchý progress bar - vizualizace -->
-        <div v-if="ovzProgress > 0" class="space-y-2">
-          <h4 class="font-medium">Vizualizace OVZ</h4>
-          <div class="w-full bg-gray-200 rounded-full h-8">
+        <div v-if="ovzProgress > 0" class="space-y-2 fade-in">
+          <h4 class="font-medium text-gray-800 dark:text-gray-200">Vizualizace OVZ</h4>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-8 overflow-hidden">
             <div 
               class="bg-gradient-to-r from-blue-400 to-green-500 h-8 rounded-full transition-all duration-700 flex items-center justify-center"
               :style="{ width: ovzProgress + '%' }"
@@ -99,7 +99,7 @@
               </span>
             </div>
           </div>
-          <p class="text-sm text-gray-600 text-center">
+          <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
             OVZ vůči průměrné mzdě ({{ avgSalary2026 }} Kč)
           </p>
         </div>

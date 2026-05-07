@@ -58,65 +58,66 @@
         {{ loading ? 'Analyzuji...' : 'Analyzovat IOLDP' }}
       </Button>
 
-      <div v-if="store.error" class="p-4 bg-red-50 text-red-600 rounded">
+      <div v-if="store.error" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded transition-colors duration-300">
         {{ store.error }}
       </div>
 
-      <div v-if="parsedData" class="mt-6 space-y-6">
-        <div class="p-6 bg-green-50 rounded-lg">
-          <h3 class="text-lg font-semibold text-green-700 mb-4">Rozpoznání data</h3>
+      <div v-if="parsedData" class="mt-6 space-y-6 fade-in">
+        <div class="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg transition-colors duration-300">
+          <h3 class="text-lg font-semibold text-green-700 dark:text-green-400 mb-4">Rozpoznání data</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="bg-white p-3 rounded">
-              <p class="text-sm text-gray-600">Jméno</p>
-              <p class="font-medium">{{ parsedData.fullName }}</p>
+            <div class="bg-white dark:bg-[#16213e] p-3 rounded border border-gray-200 dark:border-[#2d3748] transition-colors duration-300">
+              <p class="text-sm text-gray-600 dark:text-gray-400">Jméno</p>
+              <p class="font-medium text-gray-900 dark:text-gray-100">{{ parsedData.fullName }}</p>
             </div>
-            <div class="bg-white p-3 rounded">
-              <p class="text-sm text-gray-600">Datum narození</p>
-              <p class="font-medium">{{ parsedData.birthDate }}</p>
+            <div class="bg-white dark:bg-[#16213e] p-3 rounded border border-gray-200 dark:border-[#2d3748] transition-colors duration-300">
+              <p class="text-sm text-gray-600 dark:text-gray-400">Datum narození</p>
+              <p class="font-medium text-gray-900 dark:text-gray-100">{{ parsedData.birthDate }}</p>
             </div>
-            <div class="bg-white p-3 rounded">
-              <p class="text-sm text-gray-600">Doba pojištění</p>
-              <p class="font-medium">{{ parsedData.insuranceYears }} let</p>
+            <div class="bg-white dark:bg-[#16213e] p-3 rounded border border-gray-200 dark:border-[#2d3748] transition-colors duration-300">
+              <p class="text-sm text-gray-600 dark:text-gray-400">Doba pojištění</p>
+              <p class="font-medium text-gray-900 dark:text-gray-100">{{ parsedData.insuranceYears }} let</p>
             </div>
-            <div class="bg-white p-3 rounded">
-              <p class="text-sm text-gray-600">Vyloučené dny</p>
-              <p class="font-medium">{{ parsedData.excludedDays }} dní</p>
+            <div class="bg-white dark:bg-[#16213e] p-3 rounded border border-gray-200 dark:border-[#2d3748] transition-colors duration-300">
+              <p class="text-sm text-gray-600 dark:text-gray-400">Vyloučené dny</p>
+              <p class="font-medium text-gray-900 dark:text-gray-100">{{ parsedData.excludedDays }} dní</p>
             </div>
           </div>
 
           <div v-if="parsedData.annualIncomes.length > 0">
-            <h4 class="font-medium mb-3">Roční příjmy ({{ parsedData.annualIncomes.length }} let)</h4>
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="bg-white">
-                  <th class="text-left p-2">Rok</th>
-                  <th class="text-right p-2">Příjem</th>
-                  <th class="text-right p-2">Koeficient</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, idx) in parsedData.annualIncomes"
-                  :key="idx"
-                  class="border-t"
-                >
-                  <td class="p-2">{{ item.year }}</td>
-                  <td class="text-right p-2">{{ Number(item.income).toLocaleString('cs-CZ') }} Kč</td>
-                  <td class="text-right p-2">{{ item.coefficient }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <h4 class="font-medium mb-3 text-gray-800 dark:text-gray-200">Roční příjmy ({{ parsedData.annualIncomes.length }} let)</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-gray-100 dark:bg-[#1a1a2e]">
+                    <th class="text-left p-2 text-gray-700 dark:text-gray-300">Rok</th>
+                    <th class="text-right p-2 text-gray-700 dark:text-gray-300">Příjem</th>
+                    <th class="text-right p-2 text-gray-700 dark:text-gray-300">Koeficient</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(item, idx) in parsedData.annualIncomes"
+                    :key="idx"
+                    class="border-t border-gray-200 dark:border-[#2d3748]"
+                  >
+                    <td class="p-2 text-gray-800 dark:text-gray-200">{{ item.year }}</td>
+                    <td class="text-right p-2 text-gray-800 dark:text-gray-200">{{ Number(item.income).toLocaleString('cs-CZ') }} Kč</td>
+                    <td class="text-right p-2 text-gray-800 dark:text-gray-200">{{ item.coefficient }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-
-          <Button
-            variant="success"
-            class="mt-4 w-full"
-            @click="useDataForCalculation"
-          >
-            Použít tato data pro výpočet
-          </Button>
         </div>
+
+        <Button
+          variant="primary"
+          @click="applyToCalculator"
+        >
+          Použít data v kalkulačce
+        </Button>
       </div>
     </div>
   </Card>
