@@ -33,13 +33,13 @@
     <div class="container">
         <h1>Penzijní Kalkulátor 2026</h1>
         <p class="subtitle">Výpočet starobního důchodu podle zákona 155/1995 Sb.</p>
-
+        
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('pension')">Důchod</div>
-            <div class="tab" onclick="switchTab('ovz')">OVZ</div>
-            <div class="tab" onclick="switchTab('paradox')">Paradox</div>
+            <div class="tab active" onclick="switchTab('pension', event)">Důchod</div>
+            <div class="tab" onclick="switchTab('ovz', event)">OVZ</div>
+            <div class="tab" onclick="switchTab('paradox', event)">Paradox</div>
         </div>
-
+        
         <div id="pension-tab" class="tab-content active">
             <div class="form-group">
                 <label>Průměrný měsíční příjem (Kč)</label>
@@ -55,7 +55,7 @@
             </div>
             <button onclick="calculatePension()">Vypočítat důchod</button>
         </div>
-
+        
         <div id="ovz-tab" class="tab-content">
             <div class="form-group">
                 <label>Roční příjem (Kč)</label>
@@ -75,7 +75,7 @@
             </div>
             <button onclick="calculateOVZ()">Vypočítat OVZ</button>
         </div>
-
+        
         <div id="paradox-tab" class="tab-content">
             <div class="form-group">
                 <label>Roční příjem (Kč)</label>
@@ -95,35 +95,35 @@
             </div>
             <button onclick="resolveParadox()">Vyřešit paradox</button>
         </div>
-
+        
         <div id="result" class="result"></div>
     </div>
-
+    
     <script>
         const API_BASE = 'https://kalkulacka-penzi-pro-production.up.railway.app';
-
-        function switchTab(tab) {
+        
+        function switchTab(tab, event) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            window.event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
             document.getElementById(tab + '-tab').classList.add('active');
             document.getElementById('result').classList.remove('show');
         }
-
+        
         async function calculatePension() {
             const monthlyIncome = parseFloat(document.getElementById('monthly-income').value);
             const years = parseInt(document.getElementById('insurance-years').value);
             const excludedDays = parseInt(document.getElementById('excluded-days').value) || 0;
-
+            
             if (!monthlyIncome || !years) {
                 alert('Vyplňte příjem a roky pojištění');
                 return;
             }
-
+            
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
             resultDiv.classList.add('show');
-
+            
             try {
                 const response = await fetch(API_BASE + '/calculate-pension', {
                     method: 'POST',
@@ -135,12 +135,12 @@
                         excluded_days: excludedDays
                     })
                 });
-
+                
                 if (!response.ok) {
                     const errText = await response.text();
                     throw new Error('Chyba ' + response.status + ': ' + errText);
                 }
-
+                
                 const data = await response.json();
                 resultDiv.innerHTML = `
                     <h3>Výsledek výpočtu důchodu</h3>
@@ -155,55 +155,17 @@
                 resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
             }
         }
-
-        async function calculatePension() {
-            const monthlyIncome = parseFloat(document.getElementById('monthly-income').value);
-            const years = parseInt(document.getElementById('insurance-years').value');
-            const excludedDays = parseInt(document.getElementById('excluded-days').value) || 0;
-
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
-            resultDiv.classList.add('show');
-
-            try {
-                const response = await fetch(API_BASE + '/calculate-pension', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        annual_incomes: [monthlyIncome * 12],
-                        coefficients: [1.0581],
-                        insurance_years: years,
-                        excluded_days: excludedDays
-                    })
-                });
-
-                if (!response.ok) throw new Error('Chyba při výpočtu');
-
-                const data = await response.json();
-                resultDiv.innerHTML = `
-                    <h3>Výsledek výpočtu důchodu</h3>
-                    <div class="result-item"><span>OVZ:</span><span>${data.ovz.toFixed(2)} Kč</span></div>
-                    <div class="result-item"><span>Výpočtový základ:</span><span>${data.vz.toFixed(2)} Kč</span></div>
-                    <div class="result-item"><span>Základní výměra:</span><span>${data.base_pension} Kč</span></div>
-                    <div class="result-item"><span>Procentní sazba:</span><span>${data.percent_rate}%</span></div>
-                    <div class="result-item"><span>Pojištění (roky):</span><span>${data.insurance_years}</span></div>
-                    <div class="result-item"><span><strong>Celkový důchod:</strong></span><span><strong>${data.pension_amount.toFixed(2)} Kč</strong></span></div>
-                `;
-            } catch (error) {
-                resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
-            }
-        }
-
+        
         async function calculateOVZ() {
             const annualIncome = parseFloat(document.getElementById('annual-income-ovz').value);
             const coefficient = parseFloat(document.getElementById('coefficient-ovz').value);
             const totalDays = parseInt(document.getElementById('total-days-ovz').value);
             const excludedDays = parseInt(document.getElementById('excluded-days-ovz').value) || 0;
-
+            
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
             resultDiv.classList.add('show');
-
+            
             try {
                 const response = await fetch(API_BASE + '/calculate-ovz', {
                     method: 'POST',
@@ -215,29 +177,32 @@
                         excluded_days: excludedDays
                     })
                 });
-
-                if (!response.ok) throw new Error('Chyba při výpočtu');
-
+                
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error('Chyba ' + response.status + ': ' + errText);
+                }
+                
                 const data = await response.json();
                 resultDiv.innerHTML = `
                     <h3>Výsledek výpočtu OVZ</h3>
-                    <div class="result-item"><span>Osobní vyměřovací základ:</span><span><strong>${data.ovz.toFixed(2)} Kč</strong></span></div>
+                    <div class="result-item"><span>Osobní vyměřovací základ:</span><span><strong>${Number(data.ovz).toFixed(2)} Kč</strong></span></div>
                 `;
             } catch (error) {
                 resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
             }
         }
-
+        
         async function resolveParadox() {
             const annualIncome = parseFloat(document.getElementById('annual-income-paradox').value);
             const coefficient = parseFloat(document.getElementById('coefficient-paradox').value);
             const totalDays = parseInt(document.getElementById('total-days-paradox').value);
             const substituteDays = parseInt(document.getElementById('substitute-days').value);
-
+            
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
             resultDiv.classList.add('show');
-
+            
             try {
                 const response = await fetch(API_BASE + '/resolve-paradox', {
                     method: 'POST',
@@ -249,16 +214,19 @@
                         substitute_days: substituteDays
                     })
                 });
-
-                if (!response.ok) throw new Error('Chyba při výpočtu');
-
+                
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error('Chyba ' + response.status + ': ' + errText);
+                }
+                
                 const data = await response.json();
                 resultDiv.innerHTML = `
                     <h3>Řešení rozhodovacího paradoxu</h3>
                     <div class="result-item"><span>Doporučení:</span><span><strong>${data.recommendation}</strong></span></div>
-                    <div class="result-item"><span>OVZ s náhradní dobou:</span><span>${data.ovz_with_inclusion.toFixed(2)} Kč</span></div>
-                    <div class="result-item"><span>OVZ bez náhradní doby:</span><span>${data.ovz_with_exclusion.toFixed(2)} Kč</span></div>
-                    <div class="result-item"><span>Rozdíl:</span><span>${data.difference.toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>OVZ s náhradní dobou:</span><span>${Number(data.ovz_with_inclusion).toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>OVZ bez náhradní doby:</span><span>${Number(data.ovz_with_exclusion).toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>Rozdíl:</span><span>${Number(data.difference).toFixed(2)} Kč</span></div>
                 `;
             } catch (error) {
                 resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
