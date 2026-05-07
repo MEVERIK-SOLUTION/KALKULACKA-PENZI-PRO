@@ -1,8 +1,8 @@
 """
 FastAPI application for Pension Calculator
 """
-
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import sys
@@ -19,7 +19,14 @@ from paradox_resolver import resolve_paradox
 
 app = FastAPI(title="Pension Calculator API", version="1.0.0")
 
-
+# CORS middleware - allow requests from Cloudflare Pages
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://*.pages.dev", "http://localhost:3000", "http://localhost:8000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 class OVZRequest(BaseModel):
     annual_incomes: List[float]
     coefficients: List[float]
