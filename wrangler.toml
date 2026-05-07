@@ -1,25 +1,16 @@
-# KALKULAČKA PENZÍ PRO - Cloudflare configuration
+# KALKULAČKA PENZÍ PRO - Cloudflare Pages configuration
 name = "kalkulacka-penzi-pro"
-type = "javascript"
 
-# Account ID (z .env)
-account_id = "b99c06588ff17f38931b1848dea743c2"
-
-# Workers Dev (pro testování)
-workers_dev = true
+# Pages configuration
+pages_build_output_dir = "frontend"
 
 # Production prostředí
 [env.production]
 name = "kalkulacka-penzi-pro-prod"
 
-# Cloudflare Pages (frontend)
-[[env.production.pages]]
-directory = "frontend/dist"
-fallback_routing = true
-
-# API Backend (Railway) - proxy přes Cloudflare Workers
+# API Backend (Railway) 
 [env.production.vars]
-API_BASE_URL = "https://pension-calculator-pro.railway.app"
+API_BASE_URL = "https://kalkulacka-penzi-pro-production.up.railway.app"
 
 # Pro budoucí D1 databázi
 # [[d1_databases]]
@@ -31,13 +22,3 @@ API_BASE_URL = "https://pension-calculator-pro.railway.app"
 # [[r2_buckets]]
 # binding = "STORAGE"
 # bucket_name = "pension-calculator-storage"
-
-# Build konfigurace (pro frontend)
-[build]
-command = "cd frontend && npm install && npm run build"
-cwd = "."
-watch_paths = ["frontend/**/*"]
-
-[build.upload]
-dir = "frontend/dist"
-format = "service-worker"
