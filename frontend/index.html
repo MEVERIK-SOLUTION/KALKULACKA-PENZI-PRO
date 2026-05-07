@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penzijní Kalkulátor 2026</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        .subtitle { color: #7f8c8d; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; color: #34495e; font-weight: 500; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        button { background: #3498db; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px; }
+        button:hover { background: #2980b9; }
+        .result { margin-top: 30px; padding: 20px; background: #ecf0f1; border-radius: 4px; display: none; }
+        .result.show { display: block; }
+        .result h3 { color: #27ae60; margin-bottom: 15px; }
+        .result-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #bdc3c7; }
+        .result-item:last-child { border-bottom: none; font-weight: bold; color: #27ae60; font-size: 18px; }
+        .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1; }
+        .tab { padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .tab.active { border-bottom-color: #3498db; color: #3498db; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .loading { text-align: center; color: #7f8c8d; }
+        .error { color: #e74c3c; padding: 10px; background: #fadbd8; border-radius: 4px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Penzijní Kalkulátor 2026</h1>
+        <p class="subtitle">Výpočet starobního důchodu podle zákona 155/1995 Sb.</p>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('pension')">Důchod</div>
+            <div class="tab" onclick="switchTab('ovz')">OVZ</div>
+            <div class="tab" onclick="switchTab('paradox')">Paradox</div>
+        </div>
+
+        <div id="pension-tab" class="tab-content active">
+            <div class="form-group">
+                <label>Průměrný měsíční příjem (Kč)</label>
+                <input type="number" id="monthly-income" value="38000" step="1000">
+            </div>
+            <div class="form-group">
+                <label>Počet let pojištění</label>
+                <input type="number" id="insurance-years" value="45" min="0" max="50">
+            </div>
+            <div class="form-group">
+                <label>Vyloučené dny (nemoc, péče o dítě)</label>
+                <input type="number" id="excluded-days" value="0" min="0">
+            </div>
+            <button onclick="calculatePension()">Vypočítat důchod</button>
+        </div>
+
+        <div id="ovz-tab" class="tab-content">
+            <div class="form-group">
+                <label>Roční příjem (Kč)</label>
+                <input type="number" id="annual-income-ovz" value="456000" step="10000">
+            </div>
+            <div class="form-group">
+                <label>Koeficient (2026: 1.0581)</label>
+                <input type="number" id="coefficient-ovz" value="1.0581" step="0.0001">
+            </div>
+            <div class="form-group">
+                <label>Celkem dní</label>
+                <input type="number" id="total-days-ovz" value="16425" min="0">
+            </div>
+            <div class="form-group">
+                <label>Vyloučené dny</label>
+                <input type="number" id="excluded-days-ovz" value="0" min="0">
+            </div>
+            <button onclick="calculateOVZ()">Vypočítat OVZ</button>
+        </div>
+
+        <div id="paradox-tab" class="tab-content">
+            <div class="form-group">
+                <label>Roční příjem (Kč)</label>
+                <input type="number" id="annual-income-paradox" value="456000" step="10000">
+            </div>
+            <div class="form-group">
+                <label>Koeficient</label>
+                <input type="number" id="coefficient-paradox" value="1.0581" step="0.0001">
+            </div>
+            <div class="form-group">
+                <label>Celkem dní</label>
+                <input type="number" id="total-days-paradox" value="16425" min="0">
+            </div>
+            <div class="form-group">
+                <label>Náhradní doby (dny)</label>
+                <input type="number" id="substitute-days" value="365" min="0">
+            </div>
+            <button onclick="resolveParadox()">Vyřešit paradox</button>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab + '-tab').classList.add('active');
+            document.getElementById('result').classList.remove('show');
+        }
+
+        async function calculatePension() {
+            const monthlyIncome = parseFloat(document.getElementById('monthly-income').value);
+            const years = parseInt(document.getElementById('insurance-years').value');
+            const excludedDays = parseInt(document.getElementById('excluded-days').value) || 0;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
+            resultDiv.classList.add('show');
+
+            try {
+                const response = await fetch(API_BASE + '/calculate-pension', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        annual_incomes: [monthlyIncome * 12],
+                        coefficients: [1.0581],
+                        insurance_years: years,
+                        excluded_days: excludedDays
+                    })
+                });
+
+                if (!response.ok) throw new Error('Chyba při výpočtu');
+
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>Výsledek výpočtu důchodu</h3>
+                    <div class="result-item"><span>OVZ:</span><span>${data.ovz.toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>Výpočtový základ:</span><span>${data.vz.toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>Základní výměra:</span><span>${data.base_pension} Kč</span></div>
+                    <div class="result-item"><span>Procentní sazba:</span><span>${data.percent_rate}%</span></div>
+                    <div class="result-item"><span>Pojištění (roky):</span><span>${data.insurance_years}</span></div>
+                    <div class="result-item"><span><strong>Celkový důchod:</strong></span><span><strong>${data.pension_amount.toFixed(2)} Kč</strong></span></div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
+            }
+        }
+
+        async function calculateOVZ() {
+            const annualIncome = parseFloat(document.getElementById('annual-income-ovz').value);
+            const coefficient = parseFloat(document.getElementById('coefficient-ovz').value);
+            const totalDays = parseInt(document.getElementById('total-days-ovz').value);
+            const excludedDays = parseInt(document.getElementById('excluded-days-ovz').value) || 0;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
+            resultDiv.classList.add('show');
+
+            try {
+                const response = await fetch(API_BASE + '/calculate-ovz', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        annual_incomes: [annualIncome],
+                        coefficients: [coefficient],
+                        total_days: totalDays,
+                        excluded_days: excludedDays
+                    })
+                });
+
+                if (!response.ok) throw new Error('Chyba při výpočtu');
+
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>Výsledek výpočtu OVZ</h3>
+                    <div class="result-item"><span>Osobní vyměřovací základ:</span><span><strong>${data.ovz.toFixed(2)} Kč</strong></span></div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
+            }
+        }
+
+        async function resolveParadox() {
+            const annualIncome = parseFloat(document.getElementById('annual-income-paradox').value);
+            const coefficient = parseFloat(document.getElementById('coefficient-paradox').value);
+            const totalDays = parseInt(document.getElementById('total-days-paradox').value);
+            const substituteDays = parseInt(document.getElementById('substitute-days').value);
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">Načítání...</div>';
+            resultDiv.classList.add('show');
+
+            try {
+                const response = await fetch(API_BASE + '/resolve-paradox', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        annual_incomes: [annualIncome],
+                        coefficients: [coefficient],
+                        total_days: totalDays,
+                        substitute_days: substituteDays
+                    })
+                });
+
+                if (!response.ok) throw new Error('Chyba při výpočtu');
+
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>Řešení rozhodovacího paradoxu</h3>
+                    <div class="result-item"><span>Doporučení:</span><span><strong>${data.recommendation}</strong></span></div>
+                    <div class="result-item"><span>OVZ s náhradní dobou:</span><span>${data.ovz_with_inclusion.toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>OVZ bez náhradní doby:</span><span>${data.ovz_with_exclusion.toFixed(2)} Kč</span></div>
+                    <div class="result-item"><span>Rozdíl:</span><span>${data.difference.toFixed(2)} Kč</span></div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">Chyba: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>

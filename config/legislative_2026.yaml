@@ -1,0 +1,81 @@
+year: 2026
+effective_from: "2026-01-01"
+effective_to: "2026-12-31"
+
+base_pension_amount: 4900
+percent_rate_per_year: 1.495
+
+reduction_limits:
+  - threshold: 21546
+    rate: 0.99
+    description: "1. redukční hranice"
+  - threshold: 195868
+    rate: 0.26
+    description: "2. redukční hranice"
+  - threshold: null
+    rate: 0.0
+    description: "nad 2. redukční hranici"
+
+general_assessment_base: 46278
+adjustment_coefficient: 1.0581
+average_wage_2025: 49262
+
+child_allowance: 500
+
+min_percent_amount: 4900
+
+retirement_age:
+  male:
+    born_before_1960: 60
+    born_1960: 61
+    born_1961: 61
+    born_1962: 62
+    born_1963: 62
+    born_1964: 62
+    born_1965: 63
+    born_1966_and_later: 65
+  female:
+    without_children: "stejné jako muži"
+    with_1_child: "o 3 měsíce méně"
+    with_2_children: "o 6 měsíců méně"
+    with_3_children: "o 9 měsíců méně"
+    with_4_or_more_children: "o 12 měsíců méně"
+
+substitute_periods:
+  study_before_1996:
+    counts: true
+    without_income: true
+    max_years: 6
+  military:
+    counts: true
+    without_income: true
+  childcare:
+    counts: true
+    without_income: true
+    max_years_per_child: 4
+    can_be_excluded: true
+  unemployment:
+    counts: true
+    without_income: true
+    registered_required: true
+
+excluded_periods:
+  sickness:
+    description: "nemoc, karanténa (max. 180 dní v roce)"
+    reduces_denominator: true
+  childcare:
+    description: "péče o dítě (lze vyloučit)"
+    reduces_denominator: true
+  military:
+    description: "vojenské cvičení (max. 30 dní)"
+    reduces_denominator: true
+
+early_retirement:
+  reduction_per_90_days: 1.5
+  max_years: 3
+
+validation:
+  source_law: "155/1995 Sb."
+  source_mpsv: "mpsv.cz/kalkulacky"
+  last_updated: "2025-10-10"
+  next_update: "2026-10-01"
