@@ -22,7 +22,10 @@ app = FastAPI(title="Pension Calculator API", version="1.0.0")
 # CORS middleware - allow requests from Cloudflare Pages
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://*.pages.dev", "http://localhost:3000", "http://localhost:8000"],
+    allow_origins=["https://bd607bd0.kalkulacka-penzi-pro.pages.dev", 
+                   "https://kalkulacka-penzi-pro.pages.dev",
+                   "http://localhost:3000", 
+                   "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
