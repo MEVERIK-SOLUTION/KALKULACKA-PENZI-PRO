@@ -316,8 +316,8 @@ function renderOVZChart() {
   if (!ctx) return;
 
   const isDarkMode = document.documentElement.classList.contains('dark');
-  const textColor = isDarkMode ? '#e2e8f0' : '#374151';
-  const gridColor = isDarkMode ? '#2d3748' : '#e5e7eb';
+  const textColor = isDarkMode ? '#cbd5e1' : '#374151';
+  const gridColor = isDarkMode ? '#334155' : '#e5e7eb';
   
   const years = breakdown.value.years;
   const labels = years.map((_, idx) => `Rok ${idx + 1}`);
@@ -379,8 +379,8 @@ function renderReductionChart() {
   if (!ctx) return;
 
   const isDarkMode = document.documentElement.classList.contains('dark');
-  const textColor = isDarkMode ? '#e2e8f0' : '#374151';
-  const gridColor = isDarkMode ? '#2d3748' : '#e5e7eb';
+  const textColor = isDarkMode ? '#cbd5e1' : '#374151';
+  const gridColor = isDarkMode ? '#334155' : '#e5e7eb';
   
   const data = reductionData.value;
   new Chart(ctx, {
@@ -436,7 +436,7 @@ function renderPensionChart() {
   if (!ctx) return;
 
   const isDarkMode = document.documentElement.classList.contains('dark');
-  const textColor = isDarkMode ? '#e2e8f0' : '#374151';
+  const textColor = isDarkMode ? '#cbd5e1' : '#374151';
   
   const data = pensionResult.value;
   const baseAmount = data.base_pension;
