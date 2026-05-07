@@ -1,0 +1,61 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    container_name: pension-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/venv  # Exclude venv
+    environment:
+      - FASTAPI_HOST=0.0.0.0
+      - FASTAPI_PORT=8000
+      - FASTAPI_LOG_LEVEL=INFO
+      - DEBUG=True
+      - PYTHONUNBUFFERED=1
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - pension-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Frontend dev server (pro budoucí Vue 3)
+  # frontend:
+  #   image: node:18-alpine
+  #   container_name: pension-frontend
+  #   working_dir: /app/frontend
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend:/app/frontend
+  #     - /app/frontend/node_modules
+  #   command: npm run dev
+  #   networks:
+  #     - pension-network
+  #   depends_on:
+  #     - api
+
+  # Database (D1 emulation s SQLite pro local dev)
+  # db:
+  #   image: sqlite:latest
+  #   container_name: pension-db
+  #   volumes:
+  #     - pension-db-volume:/data
+  #   environment:
+  #     SQLITE_DATABASE: /data/pension.db
+  #   networks:
+  #     - pension-network
+
+networks:
+  pension-network:
+    driver: bridge
+
+# volumes:
+#   pension-db-volume:
+#     driver: local
