@@ -1,0 +1,12 @@
+version: "2"
+authtoken: ${NGROK_AUTH_TOKEN}
+region: eu
+
+tunnels:
+  pension-api:
+    proto: http
+    addr: 8000
+    domain: ${NGROK_DOMAIN}
+    inspect: true
+    request_header:
+      remove: ["X-Forwarded-For"]

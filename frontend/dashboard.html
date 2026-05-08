@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penzijní Data Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #1a1a2e; padding: 20px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 1.8rem; margin-bottom: 8px; }
+  .subtitle { color: #666; margin-bottom: 24px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 8px; }
+  .card .value { font-size: 2rem; font-weight: 700; }
+  .card .unit { font-size: 0.9rem; color: #888; }
+  .card .source { font-size: 0.75rem; color: #aaa; margin-top: 4px; }
+  .card.inflation .value { color: #e74c3c; }
+  .card.wage .value { color: #27ae60; }
+  .card.growth .value { color: #2980b9; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 768px) { .charts { grid-template-columns: 1fr; } }
+  .chart-box { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .chart-box h3 { font-size: 0.95rem; margin-bottom: 12px; }
+  canvas { max-height: 300px; }
+  .error { color: #e74c3c; padding: 12px; background: #fdf0ef; border-radius: 8px; display: none; }
+  .loading { text-align: center; padding: 40px; color: #888; }
+  .last-update { text-align: right; font-size: 0.8rem; color: #aaa; margin-top: 8px; }
+  .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📊 Penzijní Data Dashboard</h1>
+  <p class="subtitle">Reálná data z ČSÚ DataStat API pro kalkulačku penze</p>
+
+  <div class="error" id="error"></div>
+
+  <div class="cards" id="cards">
+    <div class="card inflation"><h3>Meziroční inflace</h3><div class="loading">Načítám…</div></div>
+    <div class="card wage"><h3>Průměrná hrubá mzda</h3><div class="loading">Načítám…</div></div>
+    <div class="card growth"><h3>Růst mezd (10 let)</h3><div class="loading">Načítám…</div></div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-box"><h3>Meziroční inflace (%)</h3><canvas id="chartInflation"></canvas></div>
+    <div class="chart-box"><h3>Průměrná hrubá mzda (Kč)</h3><canvas id="chartWages"></canvas></div>
+  </div>
+
+  <p class="last-update" id="lastUpdate"></p>
+</div>
+
+<script>
+const API = window.location.origin;
+
+async function fetchJson(url) {
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+  return resp.json();
+}
+
+function showError(msg) {
+  const el = document.getElementById('error');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+}
+
+// Parse ČSÚ CSV – ukazatel, území, období, hodnota
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const data = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].match(/"([^"]*)"/g);
+    if (!parts || parts.length < 4) continue;
+    const row = parts.map(p => p.replace(/^"|"$/g, ''));
+    data.push({ indicator: row[0], area: row[1], period: row[2], value: parseFloat(row[3]) });
+  }
+  return data;
+}
+
+async function loadInflationChart() {
+  const resp = await fetch('https://data.csu.gov.cz/api/dotaz/v1/data/vybery/WCEN01MT01?format=CSV');
+  const text = await resp.text();
+  const data = parseCSV(text);
+  const yoy = data.filter(d => d.indicator === 'Stejné období předchozího roku = 100');
+  
+  // Posledních 24 měsíců
+  const last = yoy.slice(-24);
+  const values = last.map(d => +(d.value - 100).toFixed(1));
+
+  new Chart(document.getElementById('chartInflation'), {
+    type: 'bar',
+    data: {
+      labels: last.map(d => d.period),
+      datasets: [{
+        label: 'Meziroční inflace (%)',
+        data: values,
+        backgroundColor: values.map(v => v >= 0 ? 'rgba(231,76,60,0.6)' : 'rgba(39,174,96,0.6)'),
+        borderColor: values.map(v => v >= 0 ? '#e74c3c' : '#27ae60'),
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: v => v + '%' } } }
+    }
+  });
+}
+
+async function loadWageChart() {
+  const resp = await fetch('https://data.csu.gov.cz/api/dotaz/v1/data/vybery/MZDQ1T1?format=CSV');
+  const text = await resp.text();
+  const data = parseCSV(text);
+  const mzda = data.filter(d => d.indicator === 'Průměrná hrubá měsíční mzda na přepočtené počty zaměstnanců (Kč)');
+  
+  // Posledních 20 čtvrtletí
+  const last = mzda.slice(-20);
+
+  new Chart(document.getElementById('chartWages'), {
+    type: 'line',
+    data: {
+      labels: last.map(d => d.period),
+      datasets: [{
+        label: 'Prům. hrubá mzda (Kč)',
+        data: last.map(d => d.value),
+        borderColor: '#27ae60',
+        backgroundColor: 'rgba(39,174,96,0.1)',
+        fill: true,
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: v => v.toLocaleString('cs-CZ') + ' Kč' } } }
+    }
+  });
+}
+
+async function init() {
+  try {
+    // Karty
+    const [inf, wage, growth] = await Promise.all([
+      fetchJson(`${API}/data/inflation`),
+      fetchJson(`${API}/data/avg-wage`),
+      fetchJson(`${API}/data/wage-growth?years_back=10`),
+    ]);
+
+    document.querySelector('.card.inflation').innerHTML =
+      `<h3>Meziroční inflace</h3><div class="value">${inf.rate.toFixed(1)}<span class="unit">%</span></div><div class="source">${inf.source}</div>`;
+    document.querySelector('.card.wage').innerHTML =
+      `<h3>Průměrná hrubá mzda</h3><div class="value">${wage.amount.toLocaleString('cs-CZ')}<span class="unit"> Kč</span></div><div class="source">${wage.source}</div>`;
+    document.querySelector('.card.growth').innerHTML =
+      `<h3>Růst mezd (10 let)</h3><div class="value">${growth.rate.toFixed(1)}<span class="unit">% p.a.</span></div><div class="source">${growth.source}</div>`;
+
+    document.getElementById('lastUpdate').textContent =
+      'Poslední aktualizace: ' + new Date().toLocaleString('cs-CZ');
+
+    // Grafy
+    await Promise.all([loadInflationChart(), loadWageChart()]);
+
+  } catch (e) {
+    showError('Nepodařilo se načíst data: ' + e.message);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

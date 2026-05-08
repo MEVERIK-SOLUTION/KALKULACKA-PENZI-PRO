@@ -2,14 +2,14 @@
 Unit tests for pension_calculator.py
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(
     0, os.path.join(os.path.dirname(__file__), "..", "..", "src", "backend", "engine")
 )
 
-from pension_calculator import calculate_pension, calculate_early_retirement
+from pension_calculator import calculate_early_retirement, calculate_pension
 
 
 def test_calculate_pension_basic():

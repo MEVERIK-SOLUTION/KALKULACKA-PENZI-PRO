@@ -2,17 +2,17 @@
 Paradox Resolver - Resolves the "decision paradox" of substitute periods
 """
 
-from typing import List, Dict, Optional, Tuple
+
 from ovz_calculator import calculate_ovz
 
 
 def calculate_with_exclusion(
-    annual_incomes: List[float],
-    coefficients: List[float],
+    annual_incomes: list[float],
+    coefficients: list[float],
     total_days: int,
     excluded_days: int,
-    config: Optional[Dict] = None,
-) -> Tuple[float, float]:
+    config: dict | None = None,
+) -> tuple[float, float]:
     """Calculate OVZ with and without excluded days."""
     ovz_with = calculate_ovz(
         annual_incomes, coefficients, total_days, excluded_days=0, config=config
@@ -28,12 +28,12 @@ def calculate_with_exclusion(
 
 
 def resolve_paradox(
-    annual_incomes: List[float],
-    coefficients: List[float],
+    annual_incomes: list[float],
+    coefficients: list[float],
     total_days: int,
     substitute_days: int,
-    config: Optional[Dict] = None,
-) -> Dict:
+    config: dict | None = None,
+) -> dict:
     """
     Resolve whether to include or exclude substitute periods.
     Returns recommendation with both OVZ values.

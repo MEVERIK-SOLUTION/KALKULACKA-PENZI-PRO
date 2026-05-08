@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pension-calculator"
+version = "1.0.0"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --strict-markers"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "e2e: marks end-to-end tests (deselect with '-m \"not e2e\"')",
+    "api: marks API endpoint tests",
+    "unit: marks pure unit tests",
+    "security: marks security/auth tests",
+]
+
+[tool.coverage.run]
+source = ["src/backend", "api"]
+omit = ["*/tests/*", "*/venv/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "pass",
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "ARG"]
+ignore = ["E501", "B008", "ARG001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ARG002"]
+"api/*" = ["E402"]
+"src/backend/database/config.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
+explicit_package_bases = true
+warn_unused_configs = true
+warn_redundant_casts = true
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "cz_pension_api"
+ignore_missing_imports = true
+follow_imports = "skip"
+
+[[tool.mypy.overrides]]
+module = "slowapi.*"
+ignore_missing_imports = true

@@ -88,38 +88,44 @@ tests/
 
 ## 🔧 INTEGRACE VEŘEJNÝCH API
 
-### API 1: ČSÚ - Inflace (Dokumentace 4.7)
-```typescript
-// services/csusApi.ts
-const CSUS_INFLATION = 'https://data.csu.gov.cz/api/dotaz/v1/data/sady/CRUHVD1T2?format=json';
+### API 1: ČSÚ – DataStat ✅ (opraveno – ověřeno v rešerši #1)
 
-export async function getInflationRate(year: number) {
-  const response = await fetch(`${CSUS_INFLATION}&rok=${year}`);
-  return response.json();
+Správné endpointy (CRUHVD1T2 byla turistika, ne inflace!):
+
+```typescript
+// services/dataService.ts
+const API_BASE = 'http://localhost:8000';
+
+export async function getInflationRate() {
+  const response = await fetch(`${API_BASE}/data/inflation`);
+  return response.json(); // { rate: 2.6, unit: '%', source: 'ČSÚ DataStat' }
+}
+
+export async function getAvgWage() {
+  const response = await fetch(`${API_BASE}/data/avg-wage`);
+  return response.json(); // { amount: 49262, unit: 'Kč/měsíc', source: 'ČSÚ DataStat' }
+}
+
+export async function getWageGrowth(years: number = 10) {
+  const response = await fetch(`${API_BASE}/data/wage-growth?years_back=${years}`);
+  return response.json(); // { rate: 5.2, period_years: 10, unit: '% p.a.' }
 }
 ```
 
-### API 2: ČNB - Kurzy (Dokumentace 4.7)
-```typescript
-// services/cnbApi.ts
-const CNB_EXCHANGE = 'https://www.cnb.cz/aradb/api/v1/data?indicator_id_list=SMV5M603';
+Nebo přímo z DataStat:
 
-export async function getExchangeRate(currency: string = 'EUR') {
-  const response = await fetch(`${CNB_EXCHANGE}&api_key=${API_KEY}`);
-  return response.json();
+```typescript
+// services/datastatApi.ts
+const DATASTAT = 'https://data.csu.gov.cz/api/dotaz/v1/data/vybery';
+
+export async function getInflation() {
+  const response = await fetch(`${DATASTAT}/WCEN01MT01?format=CSV`);
+  return response.text(); // CSV s měsíční inflací
 }
-```
 
-### API 3: Hlídač státu (Dokumentace 4.2)
-```typescript
-// services/hlidacStatuApi.ts
-const HLIDAC_STATU = 'https://api.hlidacstatu.cz';
-
-export async function searchLegislation(query: string) {
-  const response = await fetch(`${HLIDAC_STATU}/search?q=${query}`, {
-    headers: { 'Authorization': `Token ${HLIDAC_STATU_TOKEN}` }
-  });
-  return response.json();
+export async function getWages() {
+  const response = await fetch(`${DATASTAT}/MZDQ1T1?format=CSV`);
+  return response.text(); // CSV s mzdami (data od 2000)
 }
 ```
 

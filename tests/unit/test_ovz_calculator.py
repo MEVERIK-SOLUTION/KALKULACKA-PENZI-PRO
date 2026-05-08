@@ -2,10 +2,10 @@
 Unit tests for ovz_calculator.py
 """
 
-import sys
-import os
 import json
-import math
+import os
+import sys
+
 import yaml
 
 sys.path.insert(
@@ -74,7 +74,7 @@ def test_reduction_2026():
             "legislative_2026.yaml",
         )
 
-    with open(config_path, "r", encoding="utf-8") as f:
+    with open(config_path, encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
     ovz = 38000.0
@@ -83,7 +83,7 @@ def test_reduction_2026():
     assert abs(vz - expected) < 1, f"Expected {expected:.2f}, got {vz:.2f}"
 
 
-def test_model_case_A01():
+def test_model_case_a01():
     """Test with model_cases.json"""
     fixture_path = os.path.join(
         os.path.dirname(__file__), "..", "fixtures", "model_cases.json"
@@ -92,7 +92,7 @@ def test_model_case_A01():
         fixture_path = "/Users/matejkocanda/Library/Mobile Documents/com~apple~CloudDocs/tests/fixtures/model_cases.json"
 
     try:
-        with open(fixture_path, "r", encoding="utf-8") as f:
+        with open(fixture_path, encoding="utf-8") as f:
             cases = json.load(f)
         a01 = next(c for c in cases if c["id"] == "A01")
         assert a01["input"]["averageOVZ"] == 38000
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"test_reduction_2026 failed: {e}")
     try:
-        test_model_case_A01()
+        test_model_case_a01()
         print("test_model_case_A01 passed")
     except Exception as e:
         print(f"test_model_case_A01 failed: {e}")

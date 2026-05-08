@@ -2,9 +2,8 @@
 Unit tests for reduction_engine.py
 """
 
-import sys
 import os
-import yaml
+import sys
 
 sys.path.insert(
     0, os.path.join(os.path.dirname(__file__), "..", "..", "src", "backend", "engine")

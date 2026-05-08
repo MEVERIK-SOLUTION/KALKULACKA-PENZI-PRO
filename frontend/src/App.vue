@@ -121,6 +121,9 @@
 
           <!-- Tab: Vizualizace -->
           <CalculationVisualization v-if="activeTab === 'visualization'" />
+
+          <!-- Tab: Porovnání -->
+          <PensionComparison v-if="activeTab === 'comparison'" />
         </div>
       </div>
 
@@ -154,6 +157,7 @@ import ParadoxResolver from '@/components/calculator/ParadoxResolver.vue';
 import IOLDPUploader from '@/components/calculator/IOLDPUploader.vue';
 import EconomicIndicators from '@/components/calculator/EconomicIndicators.vue';
 import CalculationVisualization from '@/components/calculator/CalculationVisualization.vue';
+import PensionComparison from '@/components/calculator/PensionComparison.vue';
 
 const store = useCalculatorStore();
 const loading = ref(false);
@@ -168,6 +172,7 @@ const tabs = [
   { id: 'iol-dp', label: 'IOLDP' },
   { id: 'economic', label: 'Ekonomika' },
   { id: 'visualization', label: 'Vizualizace' },
+  { id: 'comparison', label: 'Porovnání' },
 ];
 
 // Load pension form data

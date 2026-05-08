@@ -2,10 +2,9 @@
 Reduction Engine - Application of reduction limits (§ 15 ZDP)
 """
 
-from typing import List, Dict
 
 
-def apply_reduction_limits(ovz: float, reduction_limits: List[Dict]) -> float:
+def apply_reduction_limits(ovz: float, reduction_limits: list[dict]) -> float:
     """Apply reduction limits to OVZ."""
     sorted_limits = sorted(
         reduction_limits, key=lambda x: x.get("threshold") or float("inf")
@@ -43,7 +42,7 @@ def apply_reduction_limits(ovz: float, reduction_limits: List[Dict]) -> float:
     return round(vz, 2)
 
 
-def calculate_vz(ovz: float, config: Dict) -> float:
+def calculate_vz(ovz: float, config: dict) -> float:
     """Calculate Výpočtový základ from OVZ using config."""
     reduction_limits = config.get("reduction_limits", [])
     return apply_reduction_limits(ovz, reduction_limits)

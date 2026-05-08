@@ -2,18 +2,18 @@
 Pension Calculator - Main calculation engine for old-age pension
 """
 
-from typing import List, Dict, Optional
+
 from ovz_calculator import calculate_ovz, load_config
 from reduction_engine import calculate_vz
 
 
 def calculate_pension(
-    annual_incomes: List[float],
-    coefficients: List[float],
+    annual_incomes: list[float],
+    coefficients: list[float],
     insurance_years: int,
     excluded_days: int = 0,
-    config: Optional[Dict] = None,
-) -> Dict:
+    config: dict | None = None,
+) -> dict:
     """Calculate old-age pension."""
     if config is None:
         config = load_config()
@@ -39,8 +39,8 @@ def calculate_pension(
 def calculate_early_retirement(
     pension_amount: float,
     months_before: int,
-    config: Optional[Dict] = None,
-) -> Dict:
+    config: dict | None = None,
+) -> dict:
     """Calculate early retirement pension with reduction."""
     if config is None:
         config = load_config()

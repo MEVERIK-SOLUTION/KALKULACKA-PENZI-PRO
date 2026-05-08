@@ -2,8 +2,8 @@
 OVZ Calculator - Osobní vyměřovací základ (§ 15 ZDP)
 """
 
-from typing import List, Optional
 from pathlib import Path
+
 import yaml
 
 
@@ -30,7 +30,7 @@ def load_config(year: int = 2026) -> dict:
         for name in possible_names:
             config_path = directory / name
             if config_path.exists():
-                with open(config_path, "r", encoding="utf-8") as f:
+                with open(config_path, encoding="utf-8") as f:
                     return yaml.safe_load(f)
 
     raise FileNotFoundError(
@@ -39,11 +39,11 @@ def load_config(year: int = 2026) -> dict:
 
 
 def calculate_ovz(
-    annual_incomes: List[float],
-    coefficients: List[float],
+    annual_incomes: list[float],
+    coefficients: list[float],
     total_days: int,
     excluded_days: int = 0,
-    config: Optional[dict] = None,
+    config: dict | None = None,
 ) -> float:
     """Calculate Osobní vyměřovací základ (OVZ)."""
     if config is None:
@@ -52,7 +52,7 @@ def calculate_ovz(
     if len(annual_incomes) != len(coefficients):
         raise ValueError("annual_incomes and coefficients must have same length")
 
-    sum_weighted = sum(inc * coef for inc, coef in zip(annual_incomes, coefficients))
+    sum_weighted = sum(inc * coef for inc, coef in zip(annual_incomes, coefficients, strict=True))
 
     denominator_days = total_days - excluded_days
     if denominator_days <= 0:
@@ -75,7 +75,7 @@ def calculate_ovz_from_annual(
     )
 
 
-def calculate_reduced_base(ovz: float, config: Optional[dict] = None) -> float:
+def calculate_reduced_base(ovz: float, config: dict | None = None) -> float:
     """Apply reduction limits to OVZ (§ 15 ZDP)."""
     if config is None:
         config = load_config()
