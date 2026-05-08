@@ -7,10 +7,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Přidání cz_pension_api balíčku
-COPY cz_pension_api/ ./cz_pension_api/
-RUN pip install --no-cache-dir ./cz_pension_api/
-
 FROM python:3.11-slim
 
 WORKDIR /app
