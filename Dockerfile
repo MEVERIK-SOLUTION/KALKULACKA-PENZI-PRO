@@ -1,6 +1,3 @@
-# Dockerfile pro KALKULAČKA PENZÍ PRO API
-# Multi-stage: nejdřív závislosti, pak aplikace
-
 FROM python:3.11-slim AS builder
 
 WORKDIR /app
@@ -11,6 +8,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 COPY --from=builder /usr/local /usr/local
+
+COPY cz_pension_api/ ./cz_pension_api/
+RUN pip install --no-cache-dir ./cz_pension_api/
 
 COPY api/ ./api/
 COPY src/ ./src/

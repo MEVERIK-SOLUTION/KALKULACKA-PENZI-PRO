@@ -10,7 +10,7 @@ name = "kalkulacka-penzi-pro-prod"
 
 # API Backend (Railway) 
 [env.production.vars]
-API_BASE_URL = "https://kalkulacka-penzi-pro-production.up.railway.app"
+API_BASE_URL = "https://pension-api-production-e782.up.railway.app"
 
 # Pro budoucí D1 databázi
 # [[d1_databases]]

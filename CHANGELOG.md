@@ -9,6 +9,12 @@ a projekt používá [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- API deployment migrován na nový Railway projekt `pension-calculator-api`
+- Frontend (Cloudflare Pages) přepojen na nové API URL: `https://pension-api-production-e782.up.railway.app`
+- Opravena chyba async DB driveru (psycopg2 → asyncpg)
+- Přidán `langchain-community` do závislostí
+
 ### Planned
 - Vue 3 frontend migration
 - Database (D1) integration
