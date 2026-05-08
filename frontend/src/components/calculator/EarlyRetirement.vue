@@ -75,6 +75,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useCalculatorStore } from '@/stores/calculator';
+import { calculatorService } from '@/services/calculator';
 import type { EarlyRetirementResponse } from '@/types/pension';
 import Card from '@/components/common/Card.vue';
 import Input from '@/components/common/Input.vue';

@@ -177,16 +177,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { useCalculatorStore } from '@/stores/calculator';
-import type { OVZResponse, PensionResponse } from '@/types/pension';
+import { calculatorService } from '@/services/calculator';
+import type { PensionResponse } from '@/types/pension';
 import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
 import { Chart, registerables } from 'chart.js';
-import { Pie, Bar } from 'vue-chartjs';
 
-// Register Chart.js components
-registerables();
+Chart.register(...registerables);
 
 const store = useCalculatorStore();
 const loading = ref(false);
@@ -258,15 +257,7 @@ async function calculateAll() {
     renderOVZChart();
 
     // Krok 3: Reduction
-    const config = {
-      reduction_limits: [
-        { threshold: 21546, rate: 0.99 },
-        { threshold: 195868, rate: 0.26 },
-        { threshold: null, rate: 0 },
-      ],
-    };
-    
-    const vz = calculateVZ(ovzData.ovz, config);
+    const vz = calculateVZ(ovzData.ovz);
     
     reductionData.value = {
       ovz: ovzData.ovz,
@@ -302,7 +293,7 @@ async function calculateAll() {
   }
 }
 
-function calculateVZ(ovz: number, config: any): number {
+function calculateVZ(ovz: number): number {
   // Simplified reduction calculation
   if (ovz <= 21546) return ovz * 0.99;
   if (ovz <= 195868) return 21546 * 0.99 + (ovz - 21546) * 0.26;

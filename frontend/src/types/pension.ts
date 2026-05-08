@@ -24,6 +24,13 @@ export interface EarlyRetirementRequest {
   months_before: number;
 }
 
+export interface EarlyRetirementResponse {
+  original_pension: number;
+  months_early: number;
+  reduction_percent: number;
+  reduced_pension: number;
+}
+
 export interface PensionResponse {
   ovz: number;
   vz: number;

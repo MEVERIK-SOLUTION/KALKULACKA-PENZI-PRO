@@ -24,14 +24,20 @@ interface Props {
   vz: number
   basePension: number
   percentRate: number
+  insuranceYears?: number
 }
 
 const props = defineProps<Props>()
 
+const percentPortion = computed(() => {
+  const years = props.insuranceYears || 1
+  return props.vz * (props.percentRate / 100) * years
+})
+
 const chartData = computed(() => ({
   labels: ['Základní výměra', 'Procentní výměra'],
   datasets: [{
-    data: [props.basePension, props.vz * (props.percentRate / 100)],
+    data: [props.basePension, percentPortion.value],
     backgroundColor: [
       '#3B82F6', // blue
       '#10B981', // green

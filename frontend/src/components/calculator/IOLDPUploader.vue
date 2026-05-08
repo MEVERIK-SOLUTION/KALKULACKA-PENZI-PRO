@@ -184,7 +184,7 @@ async function parseFile() {
   }
 }
 
-function useDataForCalculation() {
+function applyToCalculator() {
   if (!parsedData.value) return;
   
   const input = mapToCalculatorInput(parsedData.value);

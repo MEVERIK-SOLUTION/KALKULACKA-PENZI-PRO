@@ -108,6 +108,7 @@
                     :vz="store.lastResult?.vz || 0"
                     :basePension="store.lastResult?.base_pension || 0"
                     :percentRate="store.lastResult?.percent_rate || 0"
+                    :insuranceYears="store.lastResult?.insurance_years || 0"
                   />
                 </div>
               </div>
@@ -220,8 +221,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useCalculatorStore } from '@/stores/calculator';
-import { calculatorService } from '@/services/calculator';
-import { pensionFormSchema, type PensionFormData } from '@/types/pension';
+import { pensionFormSchema } from '@/types/pension';
 import Button from '@/components/common/Button.vue';
 import Input from '@/components/common/Input.vue';
 import PensionChart from '@/components/PensionChart.vue';

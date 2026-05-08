@@ -63,13 +63,6 @@ export function parseIOLDPXML(xmlText: string): ParseResult {
       }
     });
 
-    // If no incomes found, try alternative structure
-    if (annualIncomes.length === 0) {
-      const allText = xmlText;
-      // Try to extract from text content
-      const yearMatches = allText.match(/rok[=:\s]*(\d{4})/gi);
-      const incomeMatches = allText.match(/prijem[=:\s]*([\d\s]+)/gi);
-    }
 
     // Extract excluded days
     const excludedDaysStr = getXMLValue(xmlDoc, 'vylouceneDny') || getXMLValue(xmlDoc, 'excludedDays') || '0';
