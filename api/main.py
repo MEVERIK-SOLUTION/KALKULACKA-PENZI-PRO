@@ -61,6 +61,11 @@ async def root():
     return {"message": "Pension Calculator API", "version": "1.0.0"}
 
 
+@app.get("/health")
+async def health():
+    return {"status": "ok", "service": "Pension Calculator API"}
+
+
 @app.post("/calculate-ovz")
 async def api_calculate_ovz(request: OVZRequest):
     """Calculate Osobní vyměřovací základ."""
