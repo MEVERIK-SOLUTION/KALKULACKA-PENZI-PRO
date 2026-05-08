@@ -149,6 +149,7 @@
 import { ref, onMounted } from 'vue';
 import { useCalculatorStore } from '@/stores/calculator';
 import { calculatorService } from '@/services/calculator';
+import { pensionFormSchema, type PensionFormData } from '@/types/pension';
 import Button from '@/components/common/Button.vue';
 import Input from '@/components/common/Input.vue';
 import EarlyRetirement from '@/components/calculator/EarlyRetirement.vue';
@@ -183,19 +184,22 @@ const pensionForm = ref({
 });
 
 async function calculatePension() {
-  loading.value = true;
   try {
-    const { data } = await calculatorService.calculatePension({
-      annual_incomes: [pensionForm.value.monthlyIncome * 12],
+    // Validate form data
+    const validatedData = pensionFormSchema.parse(pensionForm.value);
+    
+    await store.calculatePension({
+      annual_incomes: [validatedData.monthlyIncome * 12],
       coefficients: [1.0581],
-      insurance_years: pensionForm.value.insuranceYears,
-      excluded_days: pensionForm.value.excludedDays,
+      insurance_years: validatedData.insuranceYears,
+      excluded_days: validatedData.excludedDays || 0,
     });
-    store.setResult(data);
   } catch (err: any) {
-    store.error = err.message || 'Chyba při výpočtu';
-  } finally {
-    loading.value = false;
+    if (err.name === 'ZodError') {
+      store.error = err.errors[0].message;
+    } else {
+      // Error is handled in store
+    }
   }
 }
 

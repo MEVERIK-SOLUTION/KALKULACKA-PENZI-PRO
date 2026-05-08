@@ -44,9 +44,19 @@ export interface ParadoxResponse {
   difference: number;
 }
 
-export interface EarlyRetirementResponse {
-  original_pension: number;
-  months_early: number;
-  reduction_percent: number;
-  reduced_pension: number;
-}
+import { z } from 'zod';
+
+export const pensionFormSchema = z.object({
+  monthlyIncome: z.number()
+    .min(1000, 'Příjem musí být alespoň 1 000 Kč')
+    .max(500000, 'Příjem nesmí překročit 500 000 Kč'),
+  insuranceYears: z.number()
+    .min(1, 'Pojištění musí být alespoň 1 rok')
+    .max(50, 'Pojištění nesmí překročit 50 let'),
+  excludedDays: z.number()
+    .min(0, 'Vyloučené dny nesmí být záporné')
+    .max(365 * 50, 'Vyloučené dny nesmí překročit celkovou dobu pojištění')
+    .optional(),
+});
+
+export type PensionFormData = z.infer<typeof pensionFormSchema>;

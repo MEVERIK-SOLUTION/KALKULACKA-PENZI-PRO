@@ -6,13 +6,14 @@ import type {
   EarlyRetirementRequest, EarlyRetirementResponse 
 } from '@/types/pension';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kalkulacka-penzi-pro-production.up.railway.app';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8002';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    'X-API-Key': 'dev-key-123', // Development API key
   },
 });
 
