@@ -28,6 +28,8 @@ from src.backend.auth import EXEMPT_PATHS  # noqa: E402
 
 class APIKeyMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        if request.method == "OPTIONS":
+            return await call_next(request)
         path = request.url.path
         if path not in EXEMPT_PATHS:
             import src.backend.auth.api_key as _a

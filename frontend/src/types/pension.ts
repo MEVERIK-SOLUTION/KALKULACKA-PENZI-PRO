@@ -47,13 +47,13 @@ export interface ParadoxResponse {
 import { z } from 'zod';
 
 export const pensionFormSchema = z.object({
-  monthlyIncome: z.number()
+  monthlyIncome: z.coerce.number()
     .min(1000, 'Příjem musí být alespoň 1 000 Kč')
     .max(500000, 'Příjem nesmí překročit 500 000 Kč'),
-  insuranceYears: z.number()
+  insuranceYears: z.coerce.number()
     .min(1, 'Pojištění musí být alespoň 1 rok')
     .max(50, 'Pojištění nesmí překročit 50 let'),
-  excludedDays: z.number()
+  excludedDays: z.coerce.number()
     .min(0, 'Vyloučené dny nesmí být záporné')
     .max(365 * 50, 'Vyloučené dny nesmí překročit celkovou dobu pojištění')
     .optional(),

@@ -188,7 +188,7 @@ const loadHistory = async () => {
     params.append('limit', limit.value.toString())
     params.append('offset', offset.value.toString())
 
-    const response = await api.get<HistoryRecord[]>(`/history?${params}`)
+    const response = await api.get<HistoryRecord[]>(`/history/?${params}`)
     if (offset.value === 0) {
       history.value = response.data
     } else {
