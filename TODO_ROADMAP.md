@@ -39,7 +39,7 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 - [x] Přidat form validace (Zod)
 - [x] Commit + push: "feat: Integrate API calls and form validation"
 
-#### **Běh 1.4: UI/UX polish** ⏳
+#### **Běh 1.4: UI/UX polish** ✅ DOKONČENO
 - [ ] Implementovat responsive design
 - [ ] Přidat dark mode toggle
 - [ ] Vytvořit loading skeletons a animace
@@ -107,8 +107,8 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 ## 📊 PROGRESS TRACKING
 
 ### Aktuální úsek: **Úsek 1** (Frontend Vue 3 migrace)
-**Aktuální běh:** **Běh 1.4** (UI/UX polish)  
-**Zbývající běhy:** 1.4, 1.5  
+**Aktuální běh:** **Běh 1.5** (Testování a deploy)  
+**Zbývající běhy:** 1.5  
 
 ### Dokončené úseky:
 - ✅ Infrastruktura (Docker, CI/CD, Git)
@@ -116,6 +116,7 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 - ✅ Běh 1.1: Vue 3 projekt setup
 - ✅ Běh 1.2: Základní komponenty
 - ✅ Běh 1.3: API integrace
+- ✅ Běh 1.4: UI/UX polish
 
 ### Čekající úseky:
 - ⏳ Úsek 2: Database & historie
