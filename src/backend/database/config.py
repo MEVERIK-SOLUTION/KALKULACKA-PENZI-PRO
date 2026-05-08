@@ -4,10 +4,11 @@ from collections.abc import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-DATABASE_URL = os.environ.get(
+_DATABASE_URL = os.environ.get(
     "DATABASE_URL",
     "postgresql+asyncpg://pension:pension@localhost:5432/pension",
 )
+DATABASE_URL = _DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 
 engine = create_async_engine(DATABASE_URL, echo=False, pool_size=5, max_overflow=10)
 async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

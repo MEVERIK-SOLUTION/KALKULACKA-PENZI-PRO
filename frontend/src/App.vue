@@ -134,6 +134,9 @@
 
           <!-- Tab: Porovnání -->
           <PensionComparison v-if="activeTab === 'comparison'" />
+
+          <!-- Tab: Historie -->
+          <CalculationHistory v-if="activeTab === 'history'" />
         </div>
       </div>
 
@@ -229,6 +232,7 @@ import IOLDPUploader from '@/components/calculator/IOLDPUploader.vue';
 import EconomicIndicators from '@/components/calculator/EconomicIndicators.vue';
 import CalculationVisualization from '@/components/calculator/CalculationVisualization.vue';
 import PensionComparison from '@/components/calculator/PensionComparison.vue';
+import CalculationHistory from '@/components/calculator/CalculationHistory.vue';
 
 const store = useCalculatorStore();
 const loading = ref(false);
@@ -244,6 +248,7 @@ const tabs = [
   { id: 'economic', label: 'Ekonomika' },
   { id: 'visualization', label: 'Vizualizace' },
   { id: 'comparison', label: 'Porovnání' },
+  { id: 'history', label: 'Historie' },
 ];
 
 // Load pension form data

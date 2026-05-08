@@ -20,6 +20,7 @@ alembic>=1.13.0
 psycopg2-binary>=2.9.0
 slowapi>=0.1.9
 prometheus-fastapi-instrumentator>=7.0.0
+langchain-community>=0.3.0
 langchain-ollama>=1.1.0
 langgraph>=1.1.10
 chromadb>=1.5.9
