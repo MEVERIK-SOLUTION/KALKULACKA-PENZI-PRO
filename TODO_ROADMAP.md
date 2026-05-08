@@ -13,9 +13,9 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 
 ## 📋 ROADMAP PO ÚSECÍCH
 
-### **Úsek 1: Frontend Vue 3 migrace** ⭐ (PRIORITA 1)
-**Trvání:** 5-7 dní  
-**Status:** 🔄 IN PROGRESS  
+### **Úsek 1: Frontend Vue 3 migrace** ✅ (DOKONČENO)
+**Trvání:** 5-7 dny  
+**Status:** ✅ COMPLETED  
 **Cíl:** Převést statický HTML na Vue 3 aplikaci s API integrací  
 
 #### **Běh 1.1: Vue 3 projekt setup** ✅ DOKONČENO
@@ -59,11 +59,11 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 **Status:** ⏳ PENDING  
 **Cíl:** Persistentní ukládání výpočtů  
 
-#### **Běh 2.1: Railway DB setup** ⏳
-- [ ] Nastavit PostgreSQL na Railway
-- [ ] Spustit Alembic migrace
-- [ ] Ověřit connection z API
-- [ ] Commit + push: "feat: Setup Railway PostgreSQL database"
+#### **Běh 2.1: Railway DB setup** ✅ DOKONČENO
+- [x] Nastavit PostgreSQL na Railway
+- [x] Spustit Alembic migrace
+- [x] Ověřit connection z API
+- [x] Commit + push: "feat: Setup Railway PostgreSQL database"
 
 #### **Běh 2.2: Historie funkcionalita** ⏳
 - [ ] Rozšířit history router o full CRUD
@@ -106,18 +106,14 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 
 ## 📊 PROGRESS TRACKING
 
-### Aktuální úsek: **Úsek 1** (Frontend Vue 3 migrace)
-**Aktuální běh:** **DOKONČENO - připraveno na další úsek**  
-**Zbývající běhy:** ŽÁDNÉ  
+### Aktuální úsek: **Úsek 2** (Database & historie)
+**Aktuální běh:** **Běh 2.2** (Historie funkcionalita)  
+**Zbývající běhy:** 2.2, 2.3  
 
 ### Dokončené úseky:
 - ✅ Infrastruktura (Docker, CI/CD, Git)
 - ✅ Backend engine (výpočty, API, testy)
-- ✅ Běh 1.1: Vue 3 projekt setup
-- ✅ Běh 1.2: Základní komponenty
-- ✅ Běh 1.3: API integrace
-- ✅ Běh 1.4: UI/UX polish
-- ✅ Běh 1.5: Testování a deploy
+- ✅ Úsek 1: Frontend Vue 3 migrace
 
 ### Čekající úseky:
 - ⏳ Úsek 2: Database & historie
@@ -136,4 +132,4 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 ---
 
 ## 🎯 NEXT ACTION
-Dokončit **Běh 1.3: API integrace** - přidat Zod form validace a otestovat všechny API endpointy.
+Začít **Běh 2.2: Historie funkcionalita** - rozšířit history router o full CRUD a přidat frontend pro prohlížení historie.
