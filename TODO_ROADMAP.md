@@ -46,7 +46,7 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 - [ ] Přidat Chart.js grafy pro vizualizace
 - [ ] Commit + push: "feat: Add responsive design, dark mode and charts"
 
-#### **Běh 1.5: Testování a deploy** ⏳
+#### **Běh 1.5: Testování a deploy** ✅ DOKONČENO
 - [ ] Napsat základní Vitest unit testy
 - [ ] Otestovat všechny kalkulační scénáře
 - [ ] Ověřit build a deployment na Cloudflare Pages
@@ -107,8 +107,8 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 ## 📊 PROGRESS TRACKING
 
 ### Aktuální úsek: **Úsek 1** (Frontend Vue 3 migrace)
-**Aktuální běh:** **Běh 1.5** (Testování a deploy)  
-**Zbývající běhy:** 1.5  
+**Aktuální běh:** **DOKONČENO - připraveno na další úsek**  
+**Zbývající běhy:** ŽÁDNÉ  
 
 ### Dokončené úseky:
 - ✅ Infrastruktura (Docker, CI/CD, Git)
@@ -117,6 +117,7 @@ Funkční webová aplikace pro výpočet českých důchodů s Vue 3 frontend, F
 - ✅ Běh 1.2: Základní komponenty
 - ✅ Běh 1.3: API integrace
 - ✅ Běh 1.4: UI/UX polish
+- ✅ Běh 1.5: Testování a deploy
 
 ### Čekající úseky:
 - ⏳ Úsek 2: Database & historie
