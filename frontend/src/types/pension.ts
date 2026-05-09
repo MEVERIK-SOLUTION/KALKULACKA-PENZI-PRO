@@ -59,6 +59,32 @@ export interface ParadoxResponse {
   difference: number;
 }
 
+export interface RetirementAgeRequest {
+  birth_year: number;
+  birth_month?: number;
+  gender: 'male' | 'female';
+  children?: number;
+  current_year?: number;
+  current_month?: number;
+}
+
+export interface RetirementAgeInfo {
+  months: number;
+  years: number;
+  remaining_months: number;
+  description: string;
+}
+
+export interface RetirementAgeResponse {
+  retirement_age: RetirementAgeInfo;
+  retirement_date?: {
+    year: number;
+    month: number;
+  };
+  months_remaining?: number;
+  already_retired?: boolean;
+}
+
 import { z } from 'zod';
 
 export const pensionFormSchema = z.object({

@@ -3,7 +3,8 @@ import type {
   PensionRequest, PensionResponse,
   OVZRequest, OVZResponse,
   ParadoxRequest, ParadoxResponse,
-  EarlyRetirementRequest, EarlyRetirementResponse 
+  EarlyRetirementRequest, EarlyRetirementResponse,
+  RetirementAgeRequest, RetirementAgeResponse
 } from '@/types/pension';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8002';
@@ -33,5 +34,9 @@ export const calculatorService = {
 
   calculateEarlyRetirement(payload: EarlyRetirementRequest) {
     return api.post<EarlyRetirementResponse>('/calculate-early-retirement', payload);
+  },
+
+  calculateRetirementAge(payload: RetirementAgeRequest) {
+    return api.post<RetirementAgeResponse>('/calculate-retirement-age', payload);
   },
 };

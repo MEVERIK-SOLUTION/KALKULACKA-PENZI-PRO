@@ -22,6 +22,7 @@ from data_service import PensionDataService  # noqa: E402
 from ovz_calculator import calculate_ovz  # noqa: E402
 from paradox_resolver import resolve_paradox  # noqa: E402
 from pension_calculator import calculate_early_retirement, calculate_pension  # noqa: E402
+from retirement_age_calculator import calculate_retirement_age, calculate_months_until_retirement  # noqa: E402
 
 from src.backend.auth import EXEMPT_PATHS  # noqa: E402
 
@@ -105,6 +106,15 @@ class PensionRequest(BaseModel):
 class EarlyRetirementRequest(BaseModel):
     pension_amount: float
     months_before: int
+
+
+class RetirementAgeRequest(BaseModel):
+    birth_year: int
+    birth_month: int = 1
+    gender: str = "male"
+    children: int = 0
+    current_year: int | None = None
+    current_month: int | None = None
 
 
 class ParadoxRequest(BaseModel):
@@ -238,6 +248,37 @@ async def api_resolve_paradox(request: Request, body: ParadoxRequest):
             body.total_days,
             body.substitute_days,
         )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+
+@app.post("/calculate-retirement-age")
+async def api_calculate_retirement_age(request: Request, body: RetirementAgeRequest):
+    try:
+        if body.current_year and body.current_month:
+            result = calculate_months_until_retirement(
+                birth_year=body.birth_year,
+                birth_month=body.birth_month,
+                current_year=body.current_year,
+                current_month=body.current_month,
+                gender=body.gender,
+                children=body.children,
+            )
+        else:
+            ra = calculate_retirement_age(
+                birth_year=body.birth_year,
+                gender=body.gender,
+                children=body.children,
+            )
+            result = {
+                "retirement_age": {
+                    "months": ra.months,
+                    "years": ra.years,
+                    "remaining_months": ra.remaining,
+                    "description": ra.description,
+                }
+            }
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e

@@ -44,3 +44,25 @@
 1. Frontend `EarlyRetirement.vue` by měla zobrazovat `reduction_breakdown`
 2. Koeficient `1.0581` hardcoded na mnoha místech frontendu
 3. `pytest` chybí na systému (Python 3.14)
+
+---
+
+## Fáze 2: Database & Historie ✅ DOKONČENO
+**Datum:** 9. května 2026, 17:12  
+**Commit:** `081fe7f` — `feat: Phase 2 — centralized history service`  
+**Push:** ✅ GitHub `main` branch  
+
+### Provedené změny
+
+| # | Úkol | Soubor | Stav |
+|---|------|--------|------|
+| 2.1 | Centralizovaná history service | `frontend/src/services/history.ts` | ✅ |
+| 2.2 | Auto-save výpočtů do historie | `frontend/src/stores/calculator.ts` | ✅ |
+| 2.3 | Refaktor CalculationHistory.vue | `frontend/src/components/calculator/CalculationHistory.vue` | ✅ |
+| 2.4 | Fix hardcoded API key #2 | `CalculationHistory.vue` | ✅ |
+| 2.5 | downloadBlob helper (memory leak fix) | `CalculationHistory.vue` | ✅ |
+
+### Dopad
+- Výpočty se automaticky ukládají na server (fire-and-forget — chyba neblokuje UI)
+- Jeden zdroj pravdy pro API klíč a HTTP client (`historyService`)
+- URL object leaks z exportu CSV/PDF opraveny pomocí `revokeObjectURL`
