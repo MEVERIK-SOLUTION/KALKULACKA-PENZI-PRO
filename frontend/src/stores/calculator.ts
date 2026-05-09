@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { PensionRequest, PensionResponse } from '@/types/pension';
 import { calculatorService } from '@/services/calculator';
+import { historyService } from '@/services/history';
 
 export const useCalculatorStore = defineStore('calculator', () => {
   const lastResult = ref<PensionResponse | null>(null);
@@ -23,6 +24,20 @@ export const useCalculatorStore = defineStore('calculator', () => {
         type: 'pension',
         result: response.data,
       });
+
+      // Auto-save to server history (fire-and-forget)
+      historyService.save({
+        calc_type: 'pension',
+        input_data: payload,
+        result: response.data,
+        ovz: response.data.ovz,
+        vz: response.data.vz,
+        pension_amount: response.data.pension_amount,
+        insurance_years: response.data.insurance_years,
+      }).catch((err) => {
+        console.warn('Failed to save to history:', err.message);
+      });
+
       return response.data;
     } catch (err: any) {
       error.value = err.message || 'Chyba při výpočtu';

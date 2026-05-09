@@ -146,21 +146,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
-
-interface HistoryRecord {
-  id: number
-  calc_type: string
-  input_data: any
-  result: any
-  ovz: number | null
-  vz: number | null
-  pension_amount: number | null
-  insurance_years: number | null
-  created_at: string
-  client_ip: string | null
-  note: string | null
-}
+import { historyService } from '@/services/history'
+import type { HistoryRecord } from '@/services/history'
 
 const history = ref<HistoryRecord[]>([])
 const loading = ref(false)
@@ -169,26 +156,14 @@ const selectedRecord = ref<HistoryRecord | null>(null)
 const offset = ref(0)
 const limit = ref(20)
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8002'
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-    'X-API-Key': 'dev-key-123',
-  },
-})
-
 const loadHistory = async () => {
   loading.value = true
   try {
-    const params = new URLSearchParams()
-    if (filterType.value) params.append('calc_type', filterType.value)
-    params.append('limit', limit.value.toString())
-    params.append('offset', offset.value.toString())
-
-    const response = await api.get<HistoryRecord[]>(`/history/?${params}`)
+    const response = await historyService.list({
+      calc_type: filterType.value || undefined,
+      limit: limit.value,
+      offset: offset.value,
+    })
     if (offset.value === 0) {
       history.value = response.data
     } else {
@@ -210,27 +185,28 @@ const deleteRecord = async (id: number) => {
   if (!confirm('Opravdu chcete smazat tento záznam?')) return
 
   try {
-    await api.delete(`/history/${id}`)
+    await historyService.delete(id)
     history.value = history.value.filter(r => r.id !== id)
   } catch (error) {
     console.error('Error deleting record:', error)
   }
 }
 
+const downloadBlob = (data: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(data)
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', filename)
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
 const exportCSV = async () => {
   try {
-    const params = filterType.value ? `?calc_type=${filterType.value}` : ''
-    const response = await api.get(`/history/export/csv${params}`, {
-      responseType: 'blob'
-    })
-
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'historie_vypoctu.csv')
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
+    const response = await historyService.exportCSV(filterType.value || undefined)
+    downloadBlob(new Blob([response.data]), 'historie_vypoctu.csv')
   } catch (error) {
     console.error('Error exporting CSV:', error)
   }
@@ -238,18 +214,8 @@ const exportCSV = async () => {
 
 const exportPDF = async () => {
   try {
-    const params = filterType.value ? `?calc_type=${filterType.value}` : ''
-    const response = await api.get(`/history/export/pdf${params}`, {
-      responseType: 'blob'
-    })
-
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'historie_vypoctu.pdf')
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
+    const response = await historyService.exportPDF(filterType.value || undefined)
+    downloadBlob(new Blob([response.data]), 'historie_vypoctu.pdf')
   } catch (error) {
     console.error('Error exporting PDF:', error)
   }

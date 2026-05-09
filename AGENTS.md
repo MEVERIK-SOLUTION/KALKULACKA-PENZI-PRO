@@ -23,3 +23,21 @@
 - Ověřit funkčnost všech záložek na nasazené verzi
 - Dát zpětnou vazbu uživateli k otestování
 - Případné doladění UI/UX
+
+## Session 2026-05-09 (odpoledne) — Fáze 1: Stabilizace
+
+### Hotovo
+- Odstraněn duplikátní `/health` endpoint v `api/main.py`
+- API key přesunut z hardcoded `'dev-key-123'` na `VITE_API_KEY` env proměnnou
+- Sjednocena redukční logika — `calculate_reduced_base()` deleguje na `reduction_engine.calculate_vz()`
+- Přidána numerická pravidla pro důchodový věk žen (`child_reduction_months`)
+- Implementována 3-stupňová progresivní redukce předčasného důchodu (0.9%/1.2%/1.5% za 90 dní)
+- Rozšířen TypeScript typ `EarlyRetirementResponse` o `days_early` a `reduction_breakdown`
+- Přidán `VITE_API_KEY` do `.env.example`
+- Commit `355c678` pushnut na GitHub
+
+### Architektura / důležité souvislosti
+- Předčasný důchod: API nově vrací `reduction_breakdown` — pole s detailem redukce po stupních
+- Legislativní YAML: důchodový věk v měsících (720=60let, 780=65let), ženy: `child_reduction_months`
+- API key: `VITE_API_KEY` nutno nastavit v Cloudflare Pages env pro production
+- Redukce: jediný zdroj pravdy je `reduction_engine.py`, volá se i z `ovz_calculator.py`
