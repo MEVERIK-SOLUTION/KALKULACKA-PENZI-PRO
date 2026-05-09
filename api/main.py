@@ -189,10 +189,6 @@ async def dashboard(request: Request):
     return FileResponse(DASHBOARD_PATH)
 
 
-@app.get("/health")
-async def health():
-    return {"status": "ok", "service": "Pension Calculator API"}
-
 
 @app.post("/calculate-ovz")
 async def api_calculate_ovz(request: Request, body: OVZRequest):

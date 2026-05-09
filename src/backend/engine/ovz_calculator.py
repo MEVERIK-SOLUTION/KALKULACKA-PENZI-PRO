@@ -76,43 +76,15 @@ def calculate_ovz_from_annual(
 
 
 def calculate_reduced_base(ovz: float, config: dict | None = None) -> float:
-    """Apply reduction limits to OVZ (§ 15 ZDP)."""
+    """Apply reduction limits to OVZ (§ 15 ZDP).
+
+    Delegates to reduction_engine.calculate_vz to avoid duplicate logic.
+    """
     if config is None:
         config = load_config()
 
-    reduction_limits = config.get("reduction_limits", [])
-    reduction_limits = sorted(
-        reduction_limits, key=lambda x: x.get("threshold") or float("inf")
-    )
-
-    vz = 0.0
-    remaining_ovz = ovz
-
-    for i, limit in enumerate(reduction_limits):
-        threshold = limit.get("threshold")
-        rate = limit.get("rate", 0.0)
-
-        if threshold is None:
-            break
-
-        if i == 0:
-            if remaining_ovz <= threshold:
-                vz += remaining_ovz * rate
-                remaining_ovz = 0
-                break
-            vz += threshold * rate
-            remaining_ovz -= threshold
-        else:
-            prev_threshold = reduction_limits[i - 1].get("threshold") or 0
-            bracket = threshold - prev_threshold
-            if remaining_ovz <= bracket:
-                vz += remaining_ovz * rate
-                remaining_ovz = 0
-                break
-            vz += bracket * rate
-            remaining_ovz -= bracket
-
-    return round(vz, 2)
+    from reduction_engine import calculate_vz
+    return calculate_vz(ovz, config)
 
 
 if __name__ == "__main__":

@@ -24,10 +24,18 @@ export interface EarlyRetirementRequest {
   months_before: number;
 }
 
+export interface ReductionBreakdownItem {
+  days: number;
+  rate_per_90_days: number;
+  reduction_pct: number;
+}
+
 export interface EarlyRetirementResponse {
   original_pension: number;
   months_early: number;
+  days_early: number;
   reduction_percent: number;
+  reduction_breakdown: ReductionBreakdownItem[];
   reduced_pension: number;
 }
 

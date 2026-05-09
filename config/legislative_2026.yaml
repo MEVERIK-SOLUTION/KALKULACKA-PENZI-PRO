@@ -24,22 +24,33 @@ child_allowance: 500
 
 min_percent_amount: 4900
 
+# Důchodový věk — strojově zpracovatelná pravidla
+# Zákon 155/1995 Sb., § 32, ve znění pozdějších předpisů
 retirement_age:
   male:
-    born_before_1960: 60
-    born_1960: 61
-    born_1961: 61
-    born_1962: 62
-    born_1963: 62
-    born_1964: 62
-    born_1965: 63
-    born_1966_and_later: 65
+    # Klíč: rok_narození → věk v měsících
+    born_before_1960: 720   # 60 let = 720 měsíců
+    born_1960: 732           # 61 let
+    born_1961: 732           # 61 let
+    born_1962: 744           # 62 let
+    born_1963: 744           # 62 let
+    born_1964: 744           # 62 let
+    born_1965: 756           # 63 let
+    born_1966_and_later: 780 # 65 let
   female:
-    without_children: "stejné jako muži"
-    with_1_child: "o 3 měsíce méně"
-    with_2_children: "o 6 měsíců méně"
-    with_3_children: "o 9 měsíců méně"
-    with_4_or_more_children: "o 12 měsíců méně"
+    # Základní věk = stejný jako muži (od ročníku 1971+)
+    # Pro starší ročníky: snížení za vychované děti
+    base: "male"  # odkaz na mužskou tabulku jako základ
+    child_reduction_months:
+      0: 0     # bez dětí — stejné jako muži
+      1: 4     # 1 dítě — o 4 měsíce méně
+      2: 8     # 2 děti — o 8 měsíců méně
+      3: 12    # 3 děti — o 12 měsíců méně
+      4: 16    # 4 děti — o 16 měsíců méně
+      5: 20    # 5+ dětí — o 20 měsíců méně (max)
+    # Poznámka: pro ženy nar. 1971+ se redukce za děti postupně ruší
+    # dle přechodných ustanovení novely z roku 2023
+    max_children_for_reduction: 5
 
 substitute_periods:
   study_before_1996:
@@ -70,12 +81,27 @@ excluded_periods:
     description: "vojenské cvičení (max. 30 dní)"
     reduces_denominator: true
 
+# Předčasný důchod — 2-stupňová redukce dle § 36 zákona 155/1995 Sb.
+# Stupeň 1: prvních 360 dní předčasně → 0.9% za každých 90 dní
+# Stupeň 2: dalších 360 dní (den 361–720) → 1.2% za každých 90 dní
+# Stupeň 3: od dne 721+ → 1.5% za každých 90 dní
 early_retirement:
+  stages:
+    - days_up_to: 360
+      reduction_per_90_days: 0.9
+      description: "Prvních 360 dní — 0.9% za 90 dní"
+    - days_up_to: 720
+      reduction_per_90_days: 1.2
+      description: "Den 361–720 — 1.2% za 90 dní"
+    - days_up_to: null
+      reduction_per_90_days: 1.5
+      description: "Od dne 721+ — 1.5% za 90 dní"
+  max_years: 5
+  # Legacy: jednoduchá sazba pro zpětnou kompatibilitu
   reduction_per_90_days: 1.5
-  max_years: 3
 
 validation:
   source_law: "155/1995 Sb."
   source_mpsv: "mpsv.cz/kalkulacky"
-  last_updated: "2025-10-10"
+  last_updated: "2026-05-09"
   next_update: "2026-10-01"

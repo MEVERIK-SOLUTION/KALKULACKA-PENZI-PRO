@@ -7,13 +7,14 @@ import type {
 } from '@/types/pension';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8002';
+const API_KEY = import.meta.env.VITE_API_KEY || '';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-    'X-API-Key': 'dev-key-123', // Development API key
+    ...(API_KEY ? { 'X-API-Key': API_KEY } : {}),
   },
 });
 
