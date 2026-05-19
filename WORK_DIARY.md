@@ -66,3 +66,69 @@
 - Výpočty se automaticky ukládají na server (fire-and-forget — chyba neblokuje UI)
 - Jeden zdroj pravdy pro API klíč a HTTP client (`historyService`)
 - URL object leaks z exportu CSV/PDF opraveny pomocí `revokeObjectURL`
+
+---
+
+## Fáze 3: Rozšíření výpočetního jádra ✅ DOKONČENO
+**Datum:** 9. května 2026, 17:15  
+**Commit:** `ddf944a` — `feat: Phase 3 — retirement age calculator`  
+**Push:** ✅ GitHub `main` branch  
+
+### Provedené změny
+
+| # | Úkol | Soubor | Stav |
+|---|------|--------|------|
+| 3.1 | Modul výpočtu důchodového věku | `src/backend/engine/retirement_age_calculator.py` | ✅ |
+| 3.2 | API endpoint `/calculate-retirement-age` | `api/main.py` | ✅ |
+| 3.3 | TypeScript typy (Request + Response) | `frontend/src/types/pension.ts` | ✅ |
+| 3.4 | Frontend service metoda | `frontend/src/services/calculator.ts` | ✅ |
+
+### Výsledky testů
+- Muž 1955 → **60 let 0 měs.** ✅
+- Muž 1965 → **63 let 0 měs.** ✅
+- Muž 1970 → **65 let 0 měs.** ✅
+- Žena 1965, 0 dětí → **63 let 0 měs.** ✅
+- Žena 1965, 2 děti → **62 let 4 měs.** ✅
+- Žena 1965, 5 dětí → **61 let 4 měs.** ✅
+
+### Další kroky
+- Vytvořit frontend komponentu `RetirementAgeCalculator.vue`
+- Napojit na router/záložky
+
+---
+
+## Architektonické rozhodnutí: Odsouhlasení dev/pilot stacku
+**Datum:** 9. května 2026  
+**Typ záznamu:** Infrastrukturní rozhodnutí
+
+### Odsouhlasený stack pro vývojovou a pilotní fázi
+
+| Vrstva | Technologie |
+|---|---|
+| Frontend | Cloudflare Pages (Vue 3 + Vite + TS + Tailwind) |
+| API / Engine | Google Cloud Run (Python FastAPI) |
+| Databáze | Neon.tech — serverless PostgreSQL |
+| Blob storage | Cloudflare R2 (IOLDP dokumenty, PDF reporty) |
+| Cache | Upstash Redis (serverless) |
+| Auth | Firebase Auth + Custom Claims (RBAC) |
+| Secrets | Google Secret Manager |
+| OCR / PDF | pdfplumber (Google Document AI jako záloha) |
+| Email | Resend.com |
+| Monitoring | Prometheus + Grafana (již v repozitáři) |
+| Logování | Google Cloud Logging |
+| Chyby | Sentry.io |
+| WAF | Cloudflare free DDoS (placené WAF pravidla přidat před produkcí) |
+| Mobile | PWA |
+| CI/CD | GitHub Actions |
+
+### Co se mění oproti původnímu setupu
+- Railway API hosting → **Google Cloud Run**
+- Railway PostgreSQL + Cloudflare D1 → **Neon.tech** (serverless PostgreSQL, scales to zero)
+
+### Kapacitní mety pro přechod na silnější setup
+- 1 000 requestů / měsíc
+- 100 aktivních uživatelů / den
+- 10 GB datového pohybu / den
+
+### Odůvodnění
+Setup byl navržen pro minimální provozní náklady během vývoje a pilotního provozu (~$0/měsíc — vše v free tier). Způsob škálování po dosažení kapacitní mety se rozhodne v budoucnu.
